@@ -1,0 +1,44 @@
+# DataGrip specific files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# SQL specific files
+*.db
+*.sqlite
+*.mdb
+
+# Backup and log files
+*.bak
+*.log
+*.swp
+*~
+
+# Sensitive configuration files
+*.env
+.env
+*.config
+connection.json
+
+# Compiled or temporary files
+*.class
+*.tmp
+*.temp
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Dependency directories (if applicable)
+node_modules/
+vendor/
+
+# Build output directories
+target/
+build/
+out/
+
+# DataGrip workspace-specific settings
+workspace.xml
+tasks.xml
