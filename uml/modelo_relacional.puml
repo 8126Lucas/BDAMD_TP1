@@ -1,10 +1,96 @@
 @startuml
 !define primary_key(x) <b><color:#b8861b><&key></color> x</b>
 !define foreign_key(x) <color:#aaaaaa><&key></color> x
-hide circle
+'hide circle
 
 title IsepBricolage
 
-entity AlgumaCoisa {}
+entity Item {
+    primary_key(ref_item) : VARCHAR(10)
+    ---
+    name
+    description
+    buy_price
+    sell_price
+    representation_unit
+    min_stock
+    item_stock
+}
+entity Warehouse {
+    primary_key(cod_warehouse) : AUTONUMBER
+    ---
+    name : VARCHAR(30)
+    address : VARCHAR(70)
+    capacity : FLOAT
+}
+entity Geographical_Zone {
+    primary_key(cod_geo_zone)
+    ---
+    name
+    zip_code
+}
+entity Preço_de_Venda {}
+entity Employee {
+    primary_key(employee_number)
+    foreign_key(supervisor_number)
+    ---
+    name
+    address
+    birthdate
+    tax_payer_number
+    monthly_pay
+    category
+}
+entity Client {
+    primary_key(cod_client)
+    foreign_key(cod_geo_zone)
+    ---
+    name
+    address
+    postal_address
+    phone_number
+    tax_payer_number
+    client_type
+}
+entity Order_Form {
+    foreign_key(employee_number)
+    ---
+    order_status
+}
+entity Exit_Document {
+    primary_key(cod_exit)
+    ---
+}
+entity Item_ExitDocument {
+    foreign_key(cod_exit)
+    foreign_key(cod_geo_zone)
+    foreign_key(ref_item)
+    ---
+    quantity
+}
+entity Carrier {
+    primary_key(carrier_fiscal_id)
+    ---
+    name
+    charge_per_hour
+    phone_number
+}
+entity Delivery {
+    primary_key(delivery_time)
+    primary_key(foreign_key(carrier_fiscal_id))
+    primary_key(foreign_key(cod_client))
+    ---
+    delivery_duration
+}
+entity Item_Delivery {
+    primary_key(foreign_key(ref_item))
+    primary_key(delivery_time)
+    primary_key(foreign_key(carrier_fiscal_id))
+    primary_key(foreign_key(cod_client))
+    ---
+    quantity
+}
+
+
 
 @enduml
