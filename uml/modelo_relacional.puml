@@ -1,27 +1,35 @@
 @startuml
 !define primary_key(x) <b><color:#b8861b><&key></color> x</b>
 !define foreign_key(x) <color:#aaaaaa><&key></color> x
-'hide circle
+skinparam titleFontSize 36
+top to bottom direction
 
 title IsepBricolage
 
 entity Item {
-    primary_key(ref_item) : VARCHAR(10)
+    primary_key(ref_item)
     ---
     name
     description
     buy_price
-    sell_price
     representation_unit
+}
+entity Item_Stock {
+    primary_key(stock_info_id)
+    foreign_key(ref_item)
+    foreign_key(cod_warehouse)
+    ---
     min_stock
     item_stock
 }
 entity Warehouse {
-    primary_key(cod_warehouse) : AUTONUMBER
+    primary_key(cod_warehouse)
+    foreign_key(cod_geo_zone)
     ---
-    name : VARCHAR(30)
-    address : VARCHAR(70)
-    capacity : FLOAT
+    name
+    address
+    coordinates
+    capacity
 }
 entity Geographical_Zone {
     primary_key(cod_geo_zone)
@@ -29,7 +37,13 @@ entity Geographical_Zone {
     name
     zip_code
 }
-entity Preço_de_Venda {}
+entity Sell_Price {
+    primary_key(sell_price_id)
+    foreign_key(ref_item)
+    start_date
+    end_date
+    price
+}
 entity Employee {
     primary_key(employee_number)
     foreign_key(supervisor_number)
@@ -53,18 +67,25 @@ entity Client {
     client_type
 }
 entity Order_Form {
+    primary_key(order_id)
     foreign_key(employee_number)
+    foreign_key(cod_client)
     ---
     order_status
 }
+entity Item_OrderForm {
+    primary_key(foreign_key(order_id))
+    primary_key(foreign_key(ref_item))
+}
 entity Exit_Document {
     primary_key(cod_exit)
+    foreign_key(employee_number)
     ---
 }
 entity Item_ExitDocument {
-    foreign_key(cod_exit)
-    foreign_key(cod_geo_zone)
-    foreign_key(ref_item)
+    primary_key(foreign_key(cod_exit))
+    primary_key(foreign_key(cod_geo_zone))
+    primary_key(foreign_key(ref_item))
     ---
     quantity
 }
@@ -76,21 +97,36 @@ entity Carrier {
     phone_number
 }
 entity Delivery {
-    primary_key(delivery_time)
-    primary_key(foreign_key(carrier_fiscal_id))
-    primary_key(foreign_key(cod_client))
+    primary_key(delivery_id)
+    foreign_key(carrier_fiscal_id)
+    foreign_key(cod_client)
     ---
+    delivery_time
     delivery_duration
 }
 entity Item_Delivery {
     primary_key(foreign_key(ref_item))
-    primary_key(delivery_time)
-    primary_key(foreign_key(carrier_fiscal_id))
-    primary_key(foreign_key(cod_client))
+    primary_key(foreign_key(delivery_id))
     ---
     quantity
 }
 
-
+Warehouse "1..* " -- "1 " Geographical_Zone : " are located in >"
+Item "1 " -- "1..*   " Sell_Price : "is sold at >"
+Item "1 " -- "1..* " Item_Stock : "has an available amount of >"
+Warehouse "1" -- "1..*" Item_Stock : "has an available amount of >""
+Employee "1..* " -- "1 " Warehouse : "are employed on >"
+Employee "1..*" -- "1" Geographical_Zone : "are affected to >"
+Employee "1" -- "*" Employee : "supervises >"
+Delivery "*" -- "1" Geographical_Zone : "are made on >"
+Carrier "1" -- "*" Delivery : "performs >"
+Item "1" -- "1" Item_Delivery : "is associated to >"
+Delivery "1" -- "1" Item_Delivery : "is associated to >"
+Item "1" -- "1" Item_OrderForm : "is associated to >"
+Order_Form "1" -- "1" Item_OrderForm : "is associated to >"
+Item "1" -- "1" Item_ExitDocument : "is associated to >"
+Exit_Document "1" -- "1" Item_ExitDocument : "is associated to >"
+Client "1" -- "1..*" Order_Form : "fills >"
+Delivery "1..*" -- "1" Client : "recieves <"
 
 @enduml
